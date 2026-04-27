@@ -1,0 +1,23 @@
+kind = "web"
+previewPath = "/"
+title = "My App"
+version = "1.0.0"
+id = "artifacts/main-app"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 5000
+
+[services.development]
+run = "cd ../.. && PORT=5000 node server.js"
+
+[services.production]
+build = [ "echo", "no-build" ]
+publicDir = "public"
+serve = "static"

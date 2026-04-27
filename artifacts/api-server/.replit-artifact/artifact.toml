@@ -12,14 +12,6 @@ paths = ["/api"]
 [services.development]
 run = "pnpm --filter @workspace/api-server run dev"
 
-[[services]]
-localPort = 5000
-name = "Root App"
-paths = ["/"]
-
-[services.development]
-run = "cd ../.. && node server.js"
-
 [services.production]
 
 [services.production.build]
