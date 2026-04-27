@@ -1,15 +1,11 @@
 const express = require('express');
+const path = require('path');
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 
-// Serve static files from the /public folder
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Hello World route for CP01
-app.get('/hello', (req, res) => {
-  res.send('Hello World! Server is up and running.');
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
