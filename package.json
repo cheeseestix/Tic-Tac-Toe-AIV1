@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.22.1"
+    "express": "^4.22.1",
+    "express-session": "^1.19.0"
   }
 }
