@@ -1,0 +1,37 @@
+async function handleAuth(type) {
+  // Grab the values from your HTML inputs
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  // Make sure they aren't blank
+  if (!username || !password) {
+    alert("Please fill in both fields");
+    return;
+  }
+
+  try {
+    // Send the data to your server (/login or /register)
+    const response = await fetch(`/${type}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const message = await response.text();
+
+    if (response.ok) {
+      alert(message); // Shows "Login successful!" or "Account created!"
+
+      if (type === 'login') {
+        // We'll add code later to show the game board!
+        console.log("User logged in successfully.");
+      }
+    } else {
+      // Shows error if password is wrong or user exists
+      alert("Error: " + message); 
+    }
+  } catch (error) {
+    console.error("Auth Error:", error);
+    alert("Something went wrong communicating with the server.");
+  }
+}

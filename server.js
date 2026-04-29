@@ -38,7 +38,35 @@ app.post('/register', (req, res) => {
 
   res.send('Account created! You can now login.');
 });
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const usersPath = path.join(__dirname, 'data', 'users.json');
 
+  let users = [];
+  try {
+    const raw = fs.readFileSync(usersPath, 'utf8');
+    users = JSON.parse(raw);
+  } catch (err) {
+    return res.status(500).send('Could not read user data');
+  }
+
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    req.session.user = { username: user.username };
+    res.send('Login successful!');
+  } else {
+    res.status(401).send('Invalid username or password');
+  }
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy();
+  res.send('Logged out');
+});
+
+
+// Start the server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
