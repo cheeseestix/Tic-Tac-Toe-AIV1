@@ -1,0 +1,33 @@
+/* Center everything nicely */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+/* The Grid Setup */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px); /* 3 columns, 100px wide */
+  grid-template-rows: repeat(3, 100px);    /* 3 rows, 100px tall */
+  gap: 5px; /* The space between the cells (creates the "lines") */
+  background-color: #333; /* Dark background so the gap looks like grid lines */
+  border: 5px solid #333;
+}
+
+/* Individual Squares */
+.cell {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-family: sans-serif;
+  cursor: pointer;
+}
+
+/* Slight hover effect to show it's clickable */
+.cell:hover {
+  background-color: #f0f0f0;
+}

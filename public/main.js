@@ -23,8 +23,8 @@ async function handleAuth(type) {
       alert(message); // Shows "Login successful!" or "Account created!"
 
       if (type === 'login') {
-        // We'll add code later to show the game board!
-        console.log("User logged in successfully.");
+        // Redirect the user to the game page
+        window.location.href = '/game.html';
       }
     } else {
       // Shows error if password is wrong or user exists
@@ -33,5 +33,16 @@ async function handleAuth(type) {
   } catch (error) {
     console.error("Auth Error:", error);
     alert("Something went wrong communicating with the server.");
+  }
+}
+async function handleLogout() {
+  try {
+    const response = await fetch('/logout', { method: 'POST' });
+    if (response.ok) {
+      // Send them back to the login screen
+      window.location.href = '/index.html'; 
+    }
+  } catch (error) {
+    console.error("Logout Error:", error);
   }
 }
