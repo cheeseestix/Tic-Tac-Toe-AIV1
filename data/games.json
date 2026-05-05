@@ -28,5 +28,95 @@
     ],
     "result": "Player O Wins!",
     "date": "2026-05-05T18:01:37.571Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "X",
+      "O",
+      "O",
+      "O",
+      "",
+      "",
+      ""
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-05T18:13:51.785Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "X",
+      "O",
+      "X",
+      "O",
+      "X",
+      "O"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-05T18:14:02.140Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "O",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X"
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-05T18:14:15.625Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "X",
+      "O",
+      "O",
+      "X",
+      "X",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-05T18:14:31.500Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "X",
+      "O",
+      "O",
+      "X",
+      "X",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-05T18:14:45.196Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "O",
+      "X",
+      "X",
+      "X",
+      "O",
+      "O",
+      "X",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-05T18:15:02.636Z"
   }
 ]
