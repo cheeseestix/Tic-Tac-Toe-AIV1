@@ -17,6 +17,7 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Users endpoint
 app.post('/register', (req, res) => {
   const { username, password } = req.body;
   const usersPath = path.join(__dirname, 'data', 'users.json');
@@ -38,6 +39,7 @@ app.post('/register', (req, res) => {
 
   res.send('Account created! You can now login.');
 });
+
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   const usersPath = path.join(__dirname, 'data', 'users.json');
@@ -65,6 +67,43 @@ app.post('/logout', (req, res) => {
   res.send('Logged out');
 });
 
+// Games endpoint
+const gamesPath = path.join(__dirname, 'data', 'games.json');
+
+// Ensure games.json exists and is an array
+if (!fs.existsSync(gamesPath)) {
+  fs.writeFileSync(gamesPath, JSON.stringify([]));
+}
+
+// Save game data
+app.post('/save-game', (req, res) => {
+  const { boardState, result, date } = req.body;
+
+  let games = [];
+  try {
+    const raw = fs.readFileSync(gamesPath, 'utf8');
+    games = raw.trim() ? JSON.parse(raw) : [];
+  } catch (err) {
+    games = [];
+  }
+
+  games.push({ boardState, result, date });
+
+  fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
+
+  res.status(200).send('Game saved successfully');
+});
+
+// Fetch game history
+app.get('/games', (req, res) => {
+  try {
+    const raw = fs.readFileSync(gamesPath, 'utf8');
+    const games = raw.trim() ? JSON.parse(raw) : [];
+    res.status(200).json(games);
+  } catch (err) {
+    res.status(500).send('Could not read game data');
+  }
+});
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
