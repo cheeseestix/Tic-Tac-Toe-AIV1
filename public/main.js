@@ -35,6 +35,7 @@ async function handleAuth(type) {
     alert("Something went wrong communicating with the server.");
   }
 }
+
 async function handleLogout() {
   try {
     const response = await fetch('/logout', { method: 'POST' });
@@ -46,6 +47,7 @@ async function handleLogout() {
     console.error("Logout Error:", error);
   }
 }
+
 // ==========================================
 // GAME LOGIC
 // ==========================================
@@ -91,6 +93,7 @@ if (boardElement) {
         statusMessage.innerText = `Player ${currentPlayer} Wins!`;
         gameActive = false;
         resetButton.style.display = 'inline-block'; // Show the reset button
+        saveGameResult(`Player ${currentPlayer} Wins!`);
         return; // Stop running the rest of the function
       }
 
@@ -99,6 +102,7 @@ if (boardElement) {
         statusMessage.innerText = "It's a Draw!";
         gameActive = false;
         resetButton.style.display = 'inline-block';
+        saveGameResult("It's a Draw!");
         return;
       }
 
@@ -118,6 +122,26 @@ if (boardElement) {
       }
     }
     return false;
+  }
+}
+
+// Function to save game results
+async function saveGameResult(result) {
+  try {
+    const response = await fetch('/save-game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        boardState: [...boardState],
+        result: result,
+        date: new Date().toISOString()
+      })
+    });
+    if (!response.ok) {
+      console.error("Failed to save game result");
+    }
+  } catch (error) {
+    console.error("Error saving game result:", error);
   }
 }
 
