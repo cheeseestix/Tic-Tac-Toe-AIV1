@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe - Game History</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background-color: grey;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .history-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .game-entry {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .board-display {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin: 10px 0;
+    }
+    .board-cell {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      font-size: 24px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="history-container">
+    <h2>Game History</h2>
+    <div id="games-list"></div>
+    <button onclick="window.location.href='/game.html'">Back to Game</button>
+  </div>
+
+  <script>
+    async function loadGameHistory() {
+      try {
+        const response = await fetch('/games');
+        if (!response.ok) {
+          console.error("Failed to load game history");
+          return;
+        }
+        const games = await response.json();
+        const gamesList = document.getElementById('games-list');
+        
+        if (games.length === 0) {
+          gamesList.innerHTML = '<p>No games played yet.</p>';
+          return;
+        }
+
+        games.forEach(game => {
+          const gameEntry = document.createElement('div');
+          gameEntry.className = 'game-entry';
+          
+          const date = new Date(game.date).toLocaleString();
+          const result = document.createElement('p');
+          result.innerHTML = `<strong>Result:</strong> ${game.result} <strong>Date:</strong> ${date}`;
+          
+          const boardDisplay = document.createElement('div');
+          boardDisplay.className = 'board-display';
+          
+          game.boardState.forEach((cell, index) => {
+            const cellElement = document.createElement('div');
+            cellElement.className = 'board-cell';
+            cellElement.textContent = cell;
+            boardDisplay.appendChild(cellElement);
+          });
+          
+          gameEntry.appendChild(result);
+          gameEntry.appendChild(boardDisplay);
+          gamesList.appendChild(gameEntry);
+        });
+      } catch (error) {
+        console.error("Error loading game history:", error);
+      }
+    }
+
+    // Load game history when the page loads
+    window.onload = loadGameHistory;
+  </script>
+</body>
+</html>
