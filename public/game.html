@@ -9,11 +9,24 @@
     body {
       background-color: grey;
     }
+    .game-mode-buttons {
+      margin-bottom: 20px;
+    }
+    .game-mode-buttons button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="game-container">
     <h2>Tic Tac Toe</h2>
+    
+    <div class="game-mode-buttons">
+      <button onclick="startVsPlayer()">Player vs Player</button>
+      <button onclick="startVsAI()">Player vs AI</button>
+    </div>
     
     <h3 id="status-message">Player X's Turn</h3>
 
@@ -33,7 +46,7 @@
       <button onclick="resetGame()" id="reset-button" style="display: none;">Play Again</button>
       <button onclick="handleLogout()">Logout</button>
       <button onclick="window.location.href='/history.html'">View Past Games</button>
-  </div>
+    </div>
 
   <script src="main.js"></script>
 </body>
