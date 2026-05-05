@@ -55,6 +55,7 @@ async function handleLogout() {
 let currentPlayer = 'X';
 let boardState = ['', '', '', '', '', '', '', '', ''];
 let gameActive = true; // Tells us if the game is still going
+let isVsAI = false; // Track if the game is vs AI
 
 // All the index combinations that result in a win
 const winningConditions = [
@@ -109,6 +110,36 @@ if (boardElement) {
       // 4. If no win and no draw, swap turns
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
       statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
+
+      // 5. If playing vs AI and it's AI's turn (O), make AI move
+      if (isVsAI && currentPlayer === 'O' && gameActive) {
+        setTimeout(() => {
+          const aiMove = getAIMove();
+          if (aiMove !== null) {
+            boardState[aiMove] = 'O';
+            document.querySelector(`.cell[data-index="${aiMove}"]`).innerText = 'O';
+
+            if (checkWin()) {
+              statusMessage.innerText = 'AI Wins!';
+              gameActive = false;
+              resetButton.style.display = 'inline-block';
+              saveGameResult('AI Wins!');
+              return;
+            }
+
+            if (!boardState.includes('')) {
+              statusMessage.innerText = "It's a Draw!";
+              gameActive = false;
+              resetButton.style.display = 'inline-block';
+              saveGameResult("It's a Draw!");
+              return;
+            }
+
+            currentPlayer = 'X';
+            statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
+          }
+        }, 500); // Delay to simulate AI thinking
+      }
     });
   });
 
@@ -123,6 +154,68 @@ if (boardElement) {
     }
     return false;
   }
+}
+
+// Minimax algorithm for AI
+function getAIMove() {
+  let bestScore = -Infinity;
+  let bestMove = null;
+
+  for (let i = 0; i < boardState.length; i++) {
+    if (boardState[i] === '') {
+      boardState[i] = 'O';
+      let score = minimax(boardState, 0, false);
+      boardState[i] = '';
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
+    }
+  }
+
+  return bestMove;
+}
+
+function minimax(board, depth, isMaximizing) {
+  // Check terminal states
+  if (checkTerminalWin('O')) return 10 - depth;
+  if (checkTerminalWin('X')) return depth - 10;
+  if (!board.includes('')) return 0;
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === '') {
+        board[i] = 'O';
+        let score = minimax(board, depth + 1, false);
+        board[i] = '';
+        bestScore = Math.max(score, bestScore);
+      }
+    }
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === '') {
+        board[i] = 'X';
+        let score = minimax(board, depth + 1, true);
+        board[i] = '';
+        bestScore = Math.min(score, bestScore);
+      }
+    }
+    return bestScore;
+  }
+}
+
+function checkTerminalWin(player) {
+  for (let condition of winningConditions) {
+    const [a, b, c] = condition;
+    if (boardState[a] === player && boardState[b] === player && boardState[c] === player) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Function to save game results
@@ -145,6 +238,20 @@ async function saveGameResult(result) {
   }
 }
 
+// Global function to start a new game vs AI
+function startVsAI() {
+  isVsAI = true;
+  resetGame();
+  document.getElementById('status-message').innerText = 'Player X\'s Turn (vs AI)';
+}
+
+// Global function to start a new game vs Player
+function startVsPlayer() {
+  isVsAI = false;
+  resetGame();
+  document.getElementById('status-message').innerText = 'Player X\'s Turn';
+}
+
 // Global function so the HTML button can trigger it
 function resetGame() {
   // Reset memory
@@ -153,7 +260,7 @@ function resetGame() {
   gameActive = true;
 
   // Reset UI
-  document.getElementById('status-message').innerText = `Player X's Turn`;
+  document.getElementById('status-message').innerText = isVsAI ? `Player X's Turn (vs AI)` : `Player X's Turn`;
   document.getElementById('reset-button').style.display = 'none'; // Hide button again
 
   // Clear all the squares on the screen
