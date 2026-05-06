@@ -36,15 +36,17 @@
       margin-bottom: 10px;
       min-height: 20px;
     }
-  </style>
-  <script>
-    // Show or hide AI personality selector based on game mode
-    function updatePersonalitySelectorVisibility() {
-      const selector = document.getElementById('ai-personality-selector');
-      // Show selector only if in AI mode
-      selector.style.display = isVsAI ? 'block' : 'none';
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-  </script>
+    .button-container button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="game-container">
@@ -79,11 +81,13 @@
       <div class="cell" data-index="8"></div>
     </div>
     
-    <br>
+    <div class="button-container">
       <button onclick="resetGame()" id="reset-button" style="display: none;">Play Again</button>
       <button onclick="handleLogout()">Logout</button>
       <button onclick="window.location.href='/history.html'">View Past Games</button>
+      <button onclick="window.location.href='/leaderboard.html'">View Leaderboard</button>
     </div>
+  </div>
 
   <script src="main.js"></script>
 </body>
