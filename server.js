@@ -141,13 +141,13 @@ function updateLeaderboard(username, result) {
 
   // Update stats based on the result
   playerEntry.totalGames++;
-  if (result.includes('Wins!')) {
-    if (result.includes('AI')) {
-      playerEntry.winsVsAI++;
-    } else {
-      playerEntry.winsVsPlayer++;
-    }
+  
+  if (result.includes('Wins vs AI')) {
+    playerEntry.winsVsAI++;
+  } else if (result.includes('Wins vs Player')) {
+    playerEntry.winsVsPlayer++;
   }
+  // For draws or AI wins, we only increment totalGames (no wins added)
 
   // Sort leaderboard by total wins (winsVsPlayer + winsVsAI)
   leaderboard.sort((a, b) => {
