@@ -463,5 +463,80 @@
     ],
     "result": "Player O Wins!",
     "date": "2026-05-06T18:07:49.629Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "",
+      "O",
+      "O",
+      "O",
+      "",
+      "X",
+      "X"
+    ],
+    "result": "Player O Wins vs Player",
+    "date": "2026-05-06T18:10:32.086Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X",
+      ""
+    ],
+    "result": "Player O Wins vs Player",
+    "date": "2026-05-06T18:10:50.302Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "",
+      "O",
+      "X",
+      "",
+      "O",
+      "X",
+      "X"
+    ],
+    "result": "Player X Wins vs Player",
+    "date": "2026-05-06T18:10:55.534Z"
+  },
+  {
+    "boardState": [
+      "",
+      "",
+      "X",
+      "",
+      "X",
+      "O",
+      "X",
+      "O",
+      ""
+    ],
+    "result": "Player X Wins vs Player",
+    "date": "2026-05-06T18:11:00.198Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "X",
+      "O",
+      "",
+      "O",
+      "O",
+      "",
+      "X",
+      "O"
+    ],
+    "result": "AI Wins vs Player",
+    "date": "2026-05-06T18:11:06.003Z"
   }
 ]
