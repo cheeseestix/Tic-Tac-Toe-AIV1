@@ -78,6 +78,7 @@ if (!fs.existsSync(gamesPath)) {
 // Save game data
 app.post('/save-game', (req, res) => {
   const { boardState, result, date } = req.body;
+  const username = req.session.user?.username || 'Anonymous';
 
   let games = [];
   try {
@@ -87,9 +88,12 @@ app.post('/save-game', (req, res) => {
     games = [];
   }
 
-  games.push({ boardState, result, date });
+  games.push({ boardState, result, date, username });
 
   fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
+
+  // Update leaderboard
+  updateLeaderboard(username, result);
 
   res.status(200).send('Game saved successfully');
 });
@@ -102,6 +106,67 @@ app.get('/games', (req, res) => {
     res.status(200).json(games);
   } catch (err) {
     res.status(500).send('Could not read game data');
+  }
+});
+
+// Leaderboard endpoint
+const leaderboardPath = path.join(__dirname, 'data', 'leaderboard.json');
+
+// Ensure leaderboard.json exists and is an array
+if (!fs.existsSync(leaderboardPath)) {
+  fs.writeFileSync(leaderboardPath, JSON.stringify([]));
+}
+
+// Update leaderboard with game result
+function updateLeaderboard(username, result) {
+  let leaderboard = [];
+  try {
+    const raw = fs.readFileSync(leaderboardPath, 'utf8');
+    leaderboard = raw.trim() ? JSON.parse(raw) : [];
+  } catch (err) {
+    leaderboard = [];
+  }
+
+  // Find or create the player's entry
+  let playerEntry = leaderboard.find(entry => entry.username === username);
+  if (!playerEntry) {
+    playerEntry = {
+      username: username,
+      winsVsPlayer: 0,
+      winsVsAI: 0,
+      totalGames: 0
+    };
+    leaderboard.push(playerEntry);
+  }
+
+  // Update stats based on the result
+  playerEntry.totalGames++;
+  if (result.includes('Wins!')) {
+    if (result.includes('AI')) {
+      playerEntry.winsVsAI++;
+    } else {
+      playerEntry.winsVsPlayer++;
+    }
+  }
+
+  // Sort leaderboard by total wins (winsVsPlayer + winsVsAI)
+  leaderboard.sort((a, b) => {
+    const aTotalWins = a.winsVsPlayer + a.winsVsAI;
+    const bTotalWins = b.winsVsPlayer + b.winsVsAI;
+    return bTotalWins - aTotalWins;
+  });
+
+  fs.writeFileSync(leaderboardPath, JSON.stringify(leaderboard, null, 2));
+}
+
+// Fetch leaderboard
+app.get('/leaderboard', (req, res) => {
+  try {
+    const raw = fs.readFileSync(leaderboardPath, 'utf8');
+    const leaderboard = raw.trim() ? JSON.parse(raw) : [];
+    res.status(200).json(leaderboard);
+  } catch (err) {
+    res.status(500).send('Could not read leaderboard data');
   }
 });
 
