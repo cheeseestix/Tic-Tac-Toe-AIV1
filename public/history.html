@@ -53,13 +53,18 @@
     button:hover {
       background-color: #45a049;
     }
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="history-container">
     <h2>Game History</h2>
-    <button onclick="window.location.href='/game.html'">Back to Game</button>
     <div id="games-list"></div>
+    <button onclick="window.location.href='/game.html'">Back to Game</button>
   </div>
 
   <script>
@@ -83,8 +88,13 @@
           gameEntry.className = 'game-entry';
           
           const date = new Date(game.date).toLocaleString();
-          const result = document.createElement('p');
-          result.innerHTML = `<strong>Result:</strong> ${game.result} <strong>Date:</strong> ${date}`;
+          const gameInfo = document.createElement('div');
+          gameInfo.className = 'game-info';
+          gameInfo.innerHTML = `
+            <span><strong>Result:</strong> ${game.result}</span>
+            <span><strong>Player:</strong> ${game.username || 'Anonymous'}</span>
+            <span><strong>Date:</strong> ${date}</span>
+          `;
           
           const boardDisplay = document.createElement('div');
           boardDisplay.className = 'board-display';
@@ -96,7 +106,7 @@
             boardDisplay.appendChild(cellElement);
           });
           
-          gameEntry.appendChild(result);
+          gameEntry.appendChild(gameInfo);
           gameEntry.appendChild(boardDisplay);
           gamesList.appendChild(gameEntry);
         });
