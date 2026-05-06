@@ -37,6 +37,14 @@
       min-height: 20px;
     }
   </style>
+  <script>
+    // Show or hide AI personality selector based on game mode
+    function updatePersonalitySelectorVisibility() {
+      const selector = document.getElementById('ai-personality-selector');
+      // Show selector only if in AI mode
+      selector.style.display = isVsAI ? 'block' : 'none';
+    }
+  </script>
 </head>
 <body>
   <div class="game-container">
@@ -49,7 +57,7 @@
       <button onclick="startVsAI('impossible')">Player vs AI (Impossible)</button>
     </div>
     
-    <div class="ai-personality-selector" id="ai-personality-selector" style="display: none;">
+    <div class="ai-personality-selector" id="ai-personality-selector">
       <button onclick="setAIPersonality('funny')">Funny AI</button>
       <button onclick="setAIPersonality('mean')">Mean AI</button>
       <button onclick="setAIPersonality('encouraging')">Encouraging AI</button>
