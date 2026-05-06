@@ -344,12 +344,21 @@ async function saveGameResult(result) {
   }
 }
 
+// Function to update the visibility of the AI personality selector
+function updatePersonalitySelectorVisibility() {
+  const selector = document.getElementById('ai-personality-selector');
+  if (selector) {
+    selector.style.display = isVsAI ? 'block' : 'none';
+  }
+}
+
 // Global function to start a new game vs AI with selected difficulty
 function startVsAI(difficulty = 'impossible') {
   isVsAI = true;
   aiDifficulty = difficulty;
   resetGame();
   document.getElementById('status-message').innerText = `Player X's Turn (vs AI - ${difficulty})`;
+  updatePersonalitySelectorVisibility();
   displayAIPersonalityMessage();
 }
 
@@ -358,6 +367,7 @@ function startVsPlayer() {
   isVsAI = false;
   resetGame();
   document.getElementById('status-message').innerText = 'Player X\'s Turn';
+  updatePersonalitySelectorVisibility();
   const personalityMessageElement = document.getElementById('ai-personality-message');
   if (personalityMessageElement) {
     personalityMessageElement.textContent = '';
