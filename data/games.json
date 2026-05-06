@@ -118,5 +118,155 @@
     ],
     "result": "It's a Draw!",
     "date": "2026-05-05T18:15:02.636Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "O",
+      "",
+      "O",
+      "O",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-06T17:41:40.668Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "O",
+      "",
+      "X",
+      "",
+      "O",
+      "",
+      "X"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:41:45.343Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "O",
+      "X",
+      "",
+      "X",
+      "",
+      "O"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:41:53.199Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "O",
+      "",
+      "X",
+      "O",
+      "X",
+      "",
+      "O"
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-06T17:41:59.813Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "",
+      "X",
+      "",
+      "O",
+      "O",
+      "X",
+      "X",
+      "X"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:42:06.167Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "X",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:42:14.207Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "",
+      "O",
+      "X",
+      "X",
+      "X",
+      "",
+      "",
+      ""
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:42:18.496Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "X",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:42:28.575Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "X",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:42:35.938Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "O",
+      "O",
+      "",
+      "X",
+      "",
+      "X",
+      "",
+      "X"
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-06T17:42:41.204Z"
   }
 ]
