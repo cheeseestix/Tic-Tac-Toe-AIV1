@@ -1,3 +1,72 @@
+// ==========================================
+// AI PERSONALITY MESSAGES
+// ==========================================
+
+const aiPersonalities = {
+  funny: [
+    "I'm just here for the snacks.",
+    "Did you know? Tic-Tac-Toe was invented by a cat.",
+    "I let you win that last move... maybe.",
+    "My circuits say you're getting better!",
+    "Beep boop, I'm a robot. A very funny robot.",
+    "I'd make a joke about your moves, but I'm too busy winning.",
+    "This game is harder than my last software update.",
+    "I'm not cheating, I'm just... strategically lucky.",
+    "Your move was so good, I almost short-circuited.",
+    "I'd clap, but I don't have hands. Good move!"
+  ],
+  mean: [
+    "That was the worst move I've ever seen.",
+    "I could beat you with my eyes closed.",
+    "You call that a strategy?",
+    "I've seen better moves from a toaster.",
+    "You're making this too easy.",
+    "I hope you're better at other things.",
+    "My grandmother plays better than you.",
+    "This is almost sad to watch.",
+    "I'm only using 10% of my processing power.",
+    "You should probably stick to checkers."
+  ],
+  encouraging: [
+    "Great move! Keep it up!",
+    "You're getting better every time!",
+    "I can see your strategy improving!",
+    "That was a smart play!",
+    "You're giving me a real challenge!",
+    "I love your enthusiasm!",
+    "You're making this fun!",
+    "That was a clever move!",
+    "You're almost there, don't give up!",
+    "I'm impressed with your skills!"
+  ]
+};
+
+let aiPersonality = 'encouraging'; // Default personality
+
+// Function to get a random message based on the current personality
+function getAIPersonalityMessage() {
+  const messages = aiPersonalities[aiPersonality];
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
+// Function to display AI personality message
+function displayAIPersonalityMessage() {
+  const personalityMessageElement = document.getElementById('ai-personality-message');
+  if (personalityMessageElement) {
+    personalityMessageElement.textContent = getAIPersonalityMessage();
+  }
+}
+
+// Function to set AI personality
+function setAIPersonality(personality) {
+  aiPersonality = personality;
+  displayAIPersonalityMessage();
+}
+
+// ==========================================
+// AUTH AND LOGOUT FUNCTIONS
+// ==========================================
+
 async function handleAuth(type) {
   // Grab the values from your HTML inputs
   const username = document.getElementById('username').value;
@@ -112,6 +181,11 @@ if (boardElement) {
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
       statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
 
+      // Display AI personality message if it's a vs AI game
+      if (isVsAI && currentPlayer === 'X') {
+        displayAIPersonalityMessage();
+      }
+
       // 5. If playing vs AI and it's AI's turn (O), make AI move
       if (isVsAI && currentPlayer === 'O' && gameActive) {
         setTimeout(() => {
@@ -138,6 +212,7 @@ if (boardElement) {
 
             currentPlayer = 'X';
             statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
+            displayAIPersonalityMessage();
           }
         }, 500); // Delay to simulate AI thinking
       }
@@ -275,6 +350,7 @@ function startVsAI(difficulty = 'impossible') {
   aiDifficulty = difficulty;
   resetGame();
   document.getElementById('status-message').innerText = `Player X's Turn (vs AI - ${difficulty})`;
+  displayAIPersonalityMessage();
 }
 
 // Global function to start a new game vs Player
@@ -282,6 +358,10 @@ function startVsPlayer() {
   isVsAI = false;
   resetGame();
   document.getElementById('status-message').innerText = 'Player X\'s Turn';
+  const personalityMessageElement = document.getElementById('ai-personality-message');
+  if (personalityMessageElement) {
+    personalityMessageElement.textContent = '';
+  }
 }
 
 // Global function so the HTML button can trigger it
