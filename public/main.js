@@ -56,6 +56,7 @@ let currentPlayer = 'X';
 let boardState = ['', '', '', '', '', '', '', '', ''];
 let gameActive = true; // Tells us if the game is still going
 let isVsAI = false; // Track if the game is vs AI
+let aiDifficulty = 'impossible'; // Track AI difficulty: 'easy', 'medium', or 'impossible'
 
 // All the index combinations that result in a win
 const winningConditions = [
@@ -158,23 +159,53 @@ if (boardElement) {
 
 // Minimax algorithm for AI
 function getAIMove() {
-  let bestScore = -Infinity;
-  let bestMove = null;
+  if (aiDifficulty === 'easy') {
+    // Easy: Random move
+    const availableMoves = boardState.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+  } else if (aiDifficulty === 'medium') {
+    // Medium: 50% chance to make a random move, 50% chance to make the best move
+    if (Math.random() < 0.5) {
+      const availableMoves = boardState.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+      return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    } else {
+      // Fall through to minimax for best move
+      let bestScore = -Infinity;
+      let bestMove = null;
 
-  for (let i = 0; i < boardState.length; i++) {
-    if (boardState[i] === '') {
-      boardState[i] = 'O';
-      let score = minimax(boardState, 0, false);
-      boardState[i] = '';
+      for (let i = 0; i < boardState.length; i++) {
+        if (boardState[i] === '') {
+          boardState[i] = 'O';
+          let score = minimax(boardState, 0, false);
+          boardState[i] = '';
 
-      if (score > bestScore) {
-        bestScore = score;
-        bestMove = i;
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = i;
+          }
+        }
+      }
+      return bestMove;
+    }
+  } else {
+    // Impossible: Always make the best move using minimax
+    let bestScore = -Infinity;
+    let bestMove = null;
+
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i] === '') {
+        boardState[i] = 'O';
+        let score = minimax(boardState, 0, false);
+        boardState[i] = '';
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = i;
+        }
       }
     }
+    return bestMove;
   }
-
-  return bestMove;
 }
 
 function minimax(board, depth, isMaximizing) {
@@ -238,11 +269,12 @@ async function saveGameResult(result) {
   }
 }
 
-// Global function to start a new game vs AI
-function startVsAI() {
+// Global function to start a new game vs AI with selected difficulty
+function startVsAI(difficulty = 'impossible') {
   isVsAI = true;
+  aiDifficulty = difficulty;
   resetGame();
-  document.getElementById('status-message').innerText = 'Player X\'s Turn (vs AI)';
+  document.getElementById('status-message').innerText = `Player X's Turn (vs AI - ${difficulty})`;
 }
 
 // Global function to start a new game vs Player
@@ -260,7 +292,7 @@ function resetGame() {
   gameActive = true;
 
   // Reset UI
-  document.getElementById('status-message').innerText = isVsAI ? `Player X's Turn (vs AI)` : `Player X's Turn`;
+  document.getElementById('status-message').innerText = isVsAI ? `Player X's Turn (vs AI - ${aiDifficulty})` : `Player X's Turn`;
   document.getElementById('reset-button').style.display = 'none'; // Hide button again
 
   // Clear all the squares on the screen
