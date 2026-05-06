@@ -342,7 +342,10 @@ async function saveGameResult(result) {
       })
     });
     if (!response.ok) {
-      console.error("Failed to save game result");
+      const errorMessage = await response.text();
+      console.error("Failed to save game result:", errorMessage);
+    } else {
+      console.log("Game saved successfully");
     }
   } catch (error) {
     console.error("Error saving game result:", error);
