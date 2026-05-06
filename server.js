@@ -78,22 +78,37 @@ if (!fs.existsSync(gamesPath)) {
 // Save game data
 app.post('/save-game', (req, res) => {
   const { boardState, result, date } = req.body;
-  const username = req.session.user?.username || 'Anonymous';
+  const username = req.session.user?.username;
+
+  if (!username) {
+    return res.status(401).send('User not authenticated');
+  }
 
   let games = [];
   try {
     const raw = fs.readFileSync(gamesPath, 'utf8');
     games = raw.trim() ? JSON.parse(raw) : [];
   } catch (err) {
+    console.error("Error reading games.json:", err);
     games = [];
   }
 
   games.push({ boardState, result, date, username });
 
-  fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
+  try {
+    fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
+    console.log("Game saved to games.json");
+  } catch (err) {
+    console.error("Error writing to games.json:", err);
+    return res.status(500).send('Failed to save game');
+  }
 
   // Update leaderboard
-  updateLeaderboard(username, result);
+  try {
+    updateLeaderboard(username, result);
+  } catch (err) {
+    console.error("Error updating leaderboard:", err);
+  }
 
   res.status(200).send('Game saved successfully');
 });
@@ -105,6 +120,7 @@ app.get('/games', (req, res) => {
     const games = raw.trim() ? JSON.parse(raw) : [];
     res.status(200).json(games);
   } catch (err) {
+    console.error("Error reading games.json:", err);
     res.status(500).send('Could not read game data');
   }
 });
@@ -124,6 +140,7 @@ function updateLeaderboard(username, result) {
     const raw = fs.readFileSync(leaderboardPath, 'utf8');
     leaderboard = raw.trim() ? JSON.parse(raw) : [];
   } catch (err) {
+    console.error("Error reading leaderboard.json:", err);
     leaderboard = [];
   }
 
@@ -156,7 +173,12 @@ function updateLeaderboard(username, result) {
     return bTotalWins - aTotalWins;
   });
 
-  fs.writeFileSync(leaderboardPath, JSON.stringify(leaderboard, null, 2));
+  try {
+    fs.writeFileSync(leaderboardPath, JSON.stringify(leaderboard, null, 2));
+    console.log("Leaderboard updated successfully");
+  } catch (err) {
+    console.error("Error writing to leaderboard.json:", err);
+  }
 }
 
 // Fetch leaderboard
@@ -166,6 +188,7 @@ app.get('/leaderboard', (req, res) => {
     const leaderboard = raw.trim() ? JSON.parse(raw) : [];
     res.status(200).json(leaderboard);
   } catch (err) {
+    console.error("Error reading leaderboard.json:", err);
     res.status(500).send('Could not read leaderboard data');
   }
 });
