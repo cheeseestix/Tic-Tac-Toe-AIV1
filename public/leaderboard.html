@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe - Leaderboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background-color: grey;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .leaderboard-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .back-button {
+      display: block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      width: 150px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .back-button:hover {
+      background-color: #45a049;
+    }
+    .rank {
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="leaderboard-container">
+    <h2>Leaderboard</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Username</th>
+          <th>Wins vs Players</th>
+          <th>Wins vs AI</th>
+          <th>Total Games</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+        <!-- Leaderboard data will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+    <button class="back-button" onclick="window.location.href='/game.html'">Back to Game</button>
+  </div>
+
+  <script>
+    async function loadLeaderboard() {
+      try {
+        const response = await fetch('/leaderboard');
+        if (!response.ok) {
+          console.error("Failed to load leaderboard");
+          return;
+        }
+        const leaderboard = await response.json();
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        
+        if (leaderboard.length === 0) {
+          leaderboardBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No games played yet.</td></tr>';
+          return;
+        }
+
+        leaderboardBody.innerHTML = '';
+        leaderboard.forEach((entry, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="rank">${index + 1}</td>
+            <td>${entry.username}</td>
+            <td>${entry.winsVsPlayer}</td>
+            <td>${entry.winsVsAI}</td>
+            <td>${entry.totalGames}</td>
+          `;
+          leaderboardBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error loading leaderboard:", error);
+      }
+    }
+
+    // Load leaderboard when the page loads
+    window.onload = loadLeaderboard;
+  </script>
+</body>
+</html>
