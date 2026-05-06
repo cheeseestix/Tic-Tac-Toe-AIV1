@@ -268,5 +268,140 @@
     ],
     "result": "AI Wins!",
     "date": "2026-05-06T17:42:41.204Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "O",
+      "O",
+      "X",
+      "X",
+      "X",
+      "O"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:48:56.674Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "",
+      "",
+      "X",
+      "O",
+      "",
+      "",
+      "X"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:49:00.074Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "X",
+      "O",
+      "O",
+      "O",
+      "X",
+      "O"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:49:09.982Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "X",
+      "O",
+      "X",
+      "O",
+      "X",
+      "O"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:49:23.330Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "X",
+      "O",
+      "",
+      "",
+      "O",
+      "",
+      "X",
+      "O"
+    ],
+    "result": "AI Wins!",
+    "date": "2026-05-06T17:49:28.423Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "X",
+      "X",
+      "X",
+      "O",
+      "O",
+      "O",
+      "X",
+      "X"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:49:36.882Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "O",
+      "X",
+      "O",
+      "X",
+      "X",
+      "O",
+      "X",
+      "O"
+    ],
+    "result": "It's a Draw!",
+    "date": "2026-05-06T17:49:46.394Z"
+  },
+  {
+    "boardState": [
+      "X",
+      "",
+      "",
+      "O",
+      "X",
+      "",
+      "O",
+      "",
+      "X"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:50:47.378Z"
+  },
+  {
+    "boardState": [
+      "O",
+      "O",
+      "X",
+      "X",
+      "X",
+      "O",
+      "X",
+      "O",
+      "X"
+    ],
+    "result": "Player X Wins!",
+    "date": "2026-05-06T17:51:01.139Z"
   }
 ]
