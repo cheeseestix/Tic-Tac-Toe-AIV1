@@ -161,10 +161,15 @@ if (boardElement) {
 
       // 2. Check if this move caused a win
       if (checkWin()) {
-        statusMessage.innerText = `Player ${currentPlayer} Wins!`;
+        const winner = currentPlayer === 'X' ? 'Player X' : (isVsAI ? 'AI' : 'Player O');
+        const result = isVsAI
+          ? (winner === 'Player X' ? 'Player X Wins vs AI' : 'AI Wins vs Player')
+          : `${winner} Wins vs Player`;
+        
+        statusMessage.innerText = `${winner} Wins!`;
         gameActive = false;
         resetButton.style.display = 'inline-block'; // Show the reset button
-        saveGameResult(`Player ${currentPlayer} Wins!`);
+        saveGameResult(result);
         return; // Stop running the rest of the function
       }
 
@@ -173,7 +178,7 @@ if (boardElement) {
         statusMessage.innerText = "It's a Draw!";
         gameActive = false;
         resetButton.style.display = 'inline-block';
-        saveGameResult("It's a Draw!");
+        saveGameResult("Draw");
         return;
       }
 
@@ -198,7 +203,7 @@ if (boardElement) {
               statusMessage.innerText = 'AI Wins!';
               gameActive = false;
               resetButton.style.display = 'inline-block';
-              saveGameResult('AI Wins!');
+              saveGameResult('AI Wins vs Player');
               return;
             }
 
@@ -206,7 +211,7 @@ if (boardElement) {
               statusMessage.innerText = "It's a Draw!";
               gameActive = false;
               resetButton.style.display = 'inline-block';
-              saveGameResult("It's a Draw!");
+              saveGameResult("Draw");
               return;
             }
 
