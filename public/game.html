@@ -17,6 +17,17 @@
       padding: 8px 16px;
       cursor: pointer;
     }
+    .ai-difficulty-buttons {
+      margin-top: 10px;
+    }
+    .ai-difficulty-buttons button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -25,7 +36,9 @@
     
     <div class="game-mode-buttons">
       <button onclick="startVsPlayer()">Player vs Player</button>
-      <button onclick="startVsAI()">Player vs AI</button>
+      <button onclick="startVsAI('easy')">Player vs AI (Easy)</button>
+      <button onclick="startVsAI('medium')">Player vs AI (Medium)</button>
+      <button onclick="startVsAI('impossible')">Player vs AI (Impossible)</button>
     </div>
     
     <h3 id="status-message">Player X's Turn</h3>
