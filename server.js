@@ -77,7 +77,7 @@ if (!fs.existsSync(gamesPath)) {
 
 // Save game data
 app.post('/save-game', (req, res) => {
-  const { boardState, result, date } = req.body;
+  const { boardState, result, date, aiDifficulty } = req.body;
   const username = req.session.user?.username;
 
   if (!username) {
@@ -93,7 +93,7 @@ app.post('/save-game', (req, res) => {
     games = [];
   }
 
-  games.push({ boardState, result, date, username });
+  games.push({ boardState, result, date, username, aiDifficulty });
 
   try {
     fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
@@ -105,7 +105,7 @@ app.post('/save-game', (req, res) => {
 
   // Update leaderboard
   try {
-    updateLeaderboard(username, result);
+    updateLeaderboard(username, result, aiDifficulty);
   } catch (err) {
     console.error("Error updating leaderboard:", err);
   }
@@ -134,7 +134,7 @@ if (!fs.existsSync(leaderboardPath)) {
 }
 
 // Update leaderboard with game result
-function updateLeaderboard(username, result) {
+function updateLeaderboard(username, result, aiDifficulty) {
   let leaderboard = [];
   try {
     const raw = fs.readFileSync(leaderboardPath, 'utf8');
@@ -151,13 +151,15 @@ function updateLeaderboard(username, result) {
       username: username,
       winsVsPlayer: 0,
       winsVsAI: 0,
-      totalGames: 0
+      totalGames: 0,
+      aiDifficulty: aiDifficulty || 'impossible'
     };
     leaderboard.push(playerEntry);
   }
 
   // Update stats based on the result
   playerEntry.totalGames++;
+  playerEntry.aiDifficulty = aiDifficulty || playerEntry.aiDifficulty;
   
   if (result.includes('Wins vs AI')) {
     playerEntry.winsVsAI++;
