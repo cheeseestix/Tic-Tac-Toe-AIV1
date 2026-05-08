@@ -21,19 +21,31 @@
     }
     .game-entry {
       margin-bottom: 20px;
-      padding: 10px;
+      padding: 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .game-info span {
+      flex: 1;
+      min-width: 150px;
+    }
     .board-display {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 60px);
       gap: 5px;
-      margin: 10px 0;
+      margin: 10px auto;
+      width: fit-content;
     }
     .board-cell {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -49,14 +61,13 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      display: block;
+      width: 150px;
+      margin-left: auto;
+      margin-right: auto;
     }
     button:hover {
       background-color: #45a049;
-    }
-    .game-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -88,11 +99,15 @@
           gameEntry.className = 'game-entry';
           
           const date = new Date(game.date).toLocaleString();
+          const isVsAI = game.result.includes('AI');
+          const gameMode = isVsAI ? 'vs AI' : 'vs Player';
+          
           const gameInfo = document.createElement('div');
           gameInfo.className = 'game-info';
           gameInfo.innerHTML = `
             <span><strong>Result:</strong> ${game.result}</span>
             <span><strong>Player:</strong> ${game.username || 'Anonymous'}</span>
+            <span><strong>Mode:</strong> ${gameMode}</span>
             <span><strong>Date:</strong> ${date}</span>
           `;
           
