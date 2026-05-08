@@ -338,7 +338,8 @@ async function saveGameResult(result) {
       body: JSON.stringify({
         boardState: [...boardState],
         result: result,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        aiDifficulty: isVsAI ? aiDifficulty : null
       })
     });
     if (!response.ok) {
