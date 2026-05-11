@@ -10,5 +10,12 @@
     "winsVsPlayer": 3,
     "winsVsAI": 0,
     "totalGames": 3
+  },
+  {
+    "username": "hii",
+    "winsVsPlayer": 1,
+    "winsVsAI": 1,
+    "totalGames": 3,
+    "aiDifficulty": "medium"
   }
 ]
