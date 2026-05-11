@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "username": "hello",
+    "winsVsPlayer": 7,
+    "winsVsAI": 3,
+    "totalGames": 16
+  },
+  {
+    "username": "thanks",
+    "winsVsPlayer": 3,
+    "winsVsAI": 0,
+    "totalGames": 3
+  }
+]
