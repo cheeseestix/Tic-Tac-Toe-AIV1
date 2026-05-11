@@ -17,5 +17,15 @@
     "winsVsAI": 1,
     "totalGames": 3,
     "aiDifficulty": "medium"
+  },
+  {
+    "username": "hello",
+    "winsVsPlayer": 0,
+    "winsVsAI": 0,
+    "winsAsX": 2,
+    "winsAsO": 0,
+    "totalGames": 2,
+    "aiDifficulty": "impossible",
+    "gameMode": "xAlwaysWins"
   }
 ]

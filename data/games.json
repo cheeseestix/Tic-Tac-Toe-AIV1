@@ -353,5 +353,31 @@
     "date": "2026-05-11T06:32:32.929Z",
     "username": "hii",
     "aiDifficulty": "medium"
+  },
+  {
+    "boardState": [
+      "X",
+      "X",
+      "O",
+      ""
+    ],
+    "result": "Player X Wins (X Always Wins)",
+    "date": "2026-05-11T07:03:35.804Z",
+    "username": "hello",
+    "aiDifficulty": null,
+    "gameMode": "xAlwaysWins"
+  },
+  {
+    "boardState": [
+      "O",
+      "",
+      "X",
+      "X"
+    ],
+    "result": "Player X Wins (X Always Wins)",
+    "date": "2026-05-11T07:03:38.702Z",
+    "username": "hello",
+    "aiDifficulty": null,
+    "gameMode": "xAlwaysWins"
   }
 ]
