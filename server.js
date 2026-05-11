@@ -77,7 +77,7 @@ if (!fs.existsSync(gamesPath)) {
 
 // Save game data
 app.post('/save-game', (req, res) => {
-  const { boardState, result, date, aiDifficulty } = req.body;
+  const { boardState, result, date, aiDifficulty, gameMode } = req.body;
   const username = req.session.user?.username;
 
   if (!username) {
@@ -93,7 +93,7 @@ app.post('/save-game', (req, res) => {
     games = [];
   }
 
-  games.push({ boardState, result, date, username, aiDifficulty });
+  games.push({ boardState, result, date, username, aiDifficulty, gameMode });
 
   try {
     fs.writeFileSync(gamesPath, JSON.stringify(games, null, 2));
@@ -105,7 +105,7 @@ app.post('/save-game', (req, res) => {
 
   // Update leaderboard
   try {
-    updateLeaderboard(username, result, aiDifficulty);
+    updateLeaderboard(username, result, aiDifficulty, gameMode);
   } catch (err) {
     console.error("Error updating leaderboard:", err);
   }
@@ -134,7 +134,7 @@ if (!fs.existsSync(leaderboardPath)) {
 }
 
 // Update leaderboard with game result
-function updateLeaderboard(username, result, aiDifficulty) {
+function updateLeaderboard(username, result, aiDifficulty, gameMode) {
   let leaderboard = [];
   try {
     const raw = fs.readFileSync(leaderboardPath, 'utf8');
@@ -144,34 +144,44 @@ function updateLeaderboard(username, result, aiDifficulty) {
     leaderboard = [];
   }
 
-  // Find or create the player's entry
-  let playerEntry = leaderboard.find(entry => entry.username === username);
+  // Find or create the player's entry for the specific game mode
+  let playerEntry = leaderboard.find(entry => entry.username === username && entry.gameMode === gameMode);
   if (!playerEntry) {
     playerEntry = {
       username: username,
       winsVsPlayer: 0,
       winsVsAI: 0,
+      winsAsX: 0,
+      winsAsO: 0,
       totalGames: 0,
-      aiDifficulty: aiDifficulty || 'impossible'
+      aiDifficulty: aiDifficulty || 'impossible',
+      gameMode: gameMode || 'classic'
     };
     leaderboard.push(playerEntry);
   }
 
-  // Update stats based on the result
+  // Update stats based on the result and game mode
   playerEntry.totalGames++;
   playerEntry.aiDifficulty = aiDifficulty || playerEntry.aiDifficulty;
   
-  if (result.includes('Wins vs AI')) {
-    playerEntry.winsVsAI++;
-  } else if (result.includes('Wins vs Player')) {
-    playerEntry.winsVsPlayer++;
+  if (gameMode === 'xAlwaysWins') {
+    if (result.includes('Player X Wins')) {
+      playerEntry.winsAsX++;
+    } else if (result.includes('AI Wins') || result.includes('Player O Wins')) {
+      playerEntry.winsAsO++;
+    }
+  } else {
+    if (result.includes('Wins vs AI')) {
+      playerEntry.winsVsAI++;
+    } else if (result.includes('Wins vs Player')) {
+      playerEntry.winsVsPlayer++;
+    }
   }
-  // For draws or AI wins, we only increment totalGames (no wins added)
 
-  // Sort leaderboard by total wins (winsVsPlayer + winsVsAI)
+  // Sort leaderboard by total wins
   leaderboard.sort((a, b) => {
-    const aTotalWins = a.winsVsPlayer + a.winsVsAI;
-    const bTotalWins = b.winsVsPlayer + b.winsVsAI;
+    const aTotalWins = (a.winsVsPlayer || 0) + (a.winsVsAI || 0) + (a.winsAsX || 0) + (a.winsAsO || 0);
+    const bTotalWins = (b.winsVsPlayer || 0) + (b.winsVsAI || 0) + (b.winsAsX || 0) + (b.winsAsO || 0);
     return bTotalWins - aTotalWins;
   });
 

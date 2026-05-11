@@ -122,13 +122,14 @@ async function handleLogout() {
 // ==========================================
 
 let currentPlayer = 'X';
-let boardState = ['', '', '', '', '', '', '', '', ''];
+let boardState = [];
 let gameActive = true; // Tells us if the game is still going
 let isVsAI = false; // Track if the game is vs AI
 let aiDifficulty = 'impossible'; // Track AI difficulty: 'easy', 'medium', or 'impossible'
+let gameMode = 'classic'; // Track game mode: 'classic' or 'xAlwaysWins'
 
-// All the index combinations that result in a win
-const winningConditions = [
+// Winning conditions for classic 3x3
+const winningConditions3x3 = [
   [0, 1, 2], // Top row
   [3, 4, 5], // Middle row
   [6, 7, 8], // Bottom row
@@ -139,102 +140,143 @@ const winningConditions = [
   [2, 4, 6]  // Diagonal top-right to bottom-left
 ];
 
+// Winning conditions for 2x2
+const winningConditions2x2 = [
+  [0, 1], // Top row
+  [2, 3], // Bottom row
+  [0, 2], // Left column
+  [1, 3], // Right column
+  [0, 3], // Diagonal top-left to bottom-right
+  [1, 2]  // Diagonal top-right to bottom-left
+];
+
 const boardElement = document.getElementById('board');
 
-if (boardElement) {
-  const cells = document.querySelectorAll('.cell');
-  const statusMessage = document.getElementById('status-message');
-  const resetButton = document.getElementById('reset-button');
+// Initialize the game board based on the mode
+function initializeBoard() {
+  if (!boardElement) return;
+  
+  boardElement.innerHTML = '';
+  
+  if (gameMode === 'xAlwaysWins') {
+    boardElement.classList.remove('size-3x3');
+    boardElement.classList.add('size-2x2');
+    boardState = ['', '', '', ''];
+    
+    for (let i = 0; i < 4; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.setAttribute('data-index', i);
+      cell.addEventListener('click', handleCellClick);
+      boardElement.appendChild(cell);
+    }
+  } else {
+    boardElement.classList.remove('size-2x2');
+    boardElement.classList.add('size-3x3');
+    boardState = ['', '', '', '', '', '', '', '', ''];
+    
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.setAttribute('data-index', i);
+      cell.addEventListener('click', handleCellClick);
+      boardElement.appendChild(cell);
+    }
+  }
+}
 
-  cells.forEach(cell => {
-    cell.addEventListener('click', () => {
-      const index = cell.getAttribute('data-index');
+// Handle cell click
+function handleCellClick() {
+  const index = this.getAttribute('data-index');
 
-      // Stop if the spot is taken OR if the game is already over
-      if (boardState[index] !== '' || !gameActive) {
-        return;
-      }
+  // Stop if the spot is taken OR if the game is already over
+  if (boardState[index] !== '' || !gameActive) {
+    return;
+  }
 
-      // 1. Update the board state and HTML
-      boardState[index] = currentPlayer;
-      cell.innerText = currentPlayer;
+  // 1. Update the board state and HTML
+  boardState[index] = currentPlayer;
+  this.innerText = currentPlayer;
 
-      // 2. Check if this move caused a win
-      if (checkWin()) {
-        const winner = currentPlayer === 'X' ? 'Player X' : (isVsAI ? 'AI' : 'Player O');
-        const result = isVsAI
-          ? (winner === 'Player X' ? 'Player X Wins vs AI' : 'AI Wins vs Player')
-          : `${winner} Wins vs Player`;
-        
-        statusMessage.innerText = `${winner} Wins!`;
-        gameActive = false;
-        resetButton.style.display = 'inline-block'; // Show the reset button
-        saveGameResult(result);
-        return; // Stop running the rest of the function
-      }
+  // 2. Check if this move caused a win
+  if (checkWin()) {
+    const winner = currentPlayer === 'X' ? 'Player X' : (isVsAI ? 'AI' : 'Player O');
+    const result = gameMode === 'xAlwaysWins'
+      ? (winner === 'Player X' ? 'Player X Wins (X Always Wins)' : 'AI Wins (X Always Wins)')
+      : (isVsAI
+        ? (winner === 'Player X' ? 'Player X Wins vs AI' : 'AI Wins vs Player')
+        : `${winner} Wins vs Player`);
+    
+    document.getElementById('status-message').innerText = `${winner} Wins!`;
+    gameActive = false;
+    document.getElementById('reset-button').style.display = 'inline-block';
+    saveGameResult(result);
+    return;
+  }
 
-      // 3. Check if the board is full (a draw)
-      if (!boardState.includes('')) {
-        statusMessage.innerText = "It's a Draw!";
-        gameActive = false;
-        resetButton.style.display = 'inline-block';
-        saveGameResult("Draw");
-        return;
-      }
+  // 3. Check if the board is full (a draw)
+  if (!boardState.includes('')) {
+    document.getElementById('status-message').innerText = "It's a Draw!";
+    gameActive = false;
+    document.getElementById('reset-button').style.display = 'inline-block';
+    saveGameResult(gameMode === 'xAlwaysWins' ? "Draw (X Always Wins)" : "Draw");
+    return;
+  }
 
-      // 4. If no win and no draw, swap turns
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
+  // 4. If no win and no draw, swap turns
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  document.getElementById('status-message').innerText = `Player ${currentPlayer}'s Turn`;
 
-      // Display AI personality message if it's a vs AI game
-      if (isVsAI && currentPlayer === 'X') {
+  // Display AI personality message if it's a vs AI game
+  if (isVsAI && currentPlayer === 'X') {
+    displayAIPersonalityMessage();
+  }
+
+  // 5. If playing vs AI and it's AI's turn (O), make AI move
+  if (isVsAI && currentPlayer === 'O' && gameActive) {
+    setTimeout(() => {
+      const aiMove = getAIMove();
+      if (aiMove !== null) {
+        boardState[aiMove] = 'O';
+        document.querySelector(`.cell[data-index="${aiMove}"]`).innerText = 'O';
+
+        if (checkWin()) {
+          document.getElementById('status-message').innerText = 'AI Wins!';
+          gameActive = false;
+          document.getElementById('reset-button').style.display = 'inline-block';
+          saveGameResult(gameMode === 'xAlwaysWins' ? 'AI Wins (X Always Wins)' : 'AI Wins vs Player');
+          return;
+        }
+
+        if (!boardState.includes('')) {
+          document.getElementById('status-message').innerText = "It's a Draw!";
+          gameActive = false;
+          document.getElementById('reset-button').style.display = 'inline-block';
+          saveGameResult(gameMode === 'xAlwaysWins' ? "Draw (X Always Wins)" : "Draw");
+          return;
+        }
+
+        currentPlayer = 'X';
+        document.getElementById('status-message').innerText = `Player ${currentPlayer}'s Turn`;
         displayAIPersonalityMessage();
       }
-
-      // 5. If playing vs AI and it's AI's turn (O), make AI move
-      if (isVsAI && currentPlayer === 'O' && gameActive) {
-        setTimeout(() => {
-          const aiMove = getAIMove();
-          if (aiMove !== null) {
-            boardState[aiMove] = 'O';
-            document.querySelector(`.cell[data-index="${aiMove}"]`).innerText = 'O';
-
-            if (checkWin()) {
-              statusMessage.innerText = 'AI Wins!';
-              gameActive = false;
-              resetButton.style.display = 'inline-block';
-              saveGameResult('AI Wins vs Player');
-              return;
-            }
-
-            if (!boardState.includes('')) {
-              statusMessage.innerText = "It's a Draw!";
-              gameActive = false;
-              resetButton.style.display = 'inline-block';
-              saveGameResult("Draw");
-              return;
-            }
-
-            currentPlayer = 'X';
-            statusMessage.innerText = `Player ${currentPlayer}'s Turn`;
-            displayAIPersonalityMessage();
-          }
-        }, 500); // Delay to simulate AI thinking
-      }
-    });
-  });
-
-  // Helper function to check if the current board matches any winning condition
-  function checkWin() {
-    for (let i = 0; i < winningConditions.length; i++) {
-      const [a, b, c] = winningConditions[i];
-      // Check if spot 'a' has something, and if 'a', 'b', and 'c' are all the exact same letter
-      if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-        return true;
-      }
-    }
-    return false;
+    }, 500); // Delay to simulate AI thinking
   }
+}
+
+// Helper function to check if the current board matches any winning condition
+function checkWin() {
+  const winningConditions = gameMode === 'xAlwaysWins' ? winningConditions2x2 : winningConditions3x3;
+  
+  for (let i = 0; i < winningConditions.length; i++) {
+    const condition = winningConditions[i];
+    const [a, b, c] = condition;
+    // Check if spot 'a' has something, and if 'a', 'b', and 'c' are all the exact same letter
+    if (boardState[a] && boardState[a] === boardState[b] && (gameMode === 'xAlwaysWins' || boardState[a] === boardState[c])) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Minimax algorithm for AI
@@ -250,48 +292,45 @@ function getAIMove() {
       return availableMoves[Math.floor(Math.random() * availableMoves.length)];
     } else {
       // Fall through to minimax for best move
-      let bestScore = -Infinity;
-      let bestMove = null;
-
-      for (let i = 0; i < boardState.length; i++) {
-        if (boardState[i] === '') {
-          boardState[i] = 'O';
-          let score = minimax(boardState, 0, false);
-          boardState[i] = '';
-
-          if (score > bestScore) {
-            bestScore = score;
-            bestMove = i;
-          }
-        }
-      }
-      return bestMove;
+      return getBestAIMove();
     }
   } else {
     // Impossible: Always make the best move using minimax
-    let bestScore = -Infinity;
-    let bestMove = null;
-
-    for (let i = 0; i < boardState.length; i++) {
-      if (boardState[i] === '') {
-        boardState[i] = 'O';
-        let score = minimax(boardState, 0, false);
-        boardState[i] = '';
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestMove = i;
-        }
-      }
-    }
-    return bestMove;
+    return getBestAIMove();
   }
 }
 
+function getBestAIMove() {
+  let bestScore = -Infinity;
+  let bestMove = null;
+
+  for (let i = 0; i < boardState.length; i++) {
+    if (boardState[i] === '') {
+      boardState[i] = 'O';
+      let score = minimax(boardState, 0, false);
+      boardState[i] = '';
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
+    }
+  }
+  return bestMove;
+}
+
 function minimax(board, depth, isMaximizing) {
+  const winningConditions = gameMode === 'xAlwaysWins' ? winningConditions2x2 : winningConditions3x3;
+  
   // Check terminal states
-  if (checkTerminalWin('O')) return 10 - depth;
-  if (checkTerminalWin('X')) return depth - 10;
+  for (let condition of winningConditions) {
+    const [a, b, c] = condition;
+    if (board[a] && board[a] === board[b] && (gameMode === 'xAlwaysWins' || board[a] === board[c])) {
+      if (board[a] === 'O') return 10 - depth;
+      if (board[a] === 'X') return depth - 10;
+    }
+  }
+  
   if (!board.includes('')) return 0;
 
   if (isMaximizing) {
@@ -319,16 +358,6 @@ function minimax(board, depth, isMaximizing) {
   }
 }
 
-function checkTerminalWin(player) {
-  for (let condition of winningConditions) {
-    const [a, b, c] = condition;
-    if (boardState[a] === player && boardState[b] === player && boardState[c] === player) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // Function to save game results
 async function saveGameResult(result) {
   try {
@@ -339,7 +368,8 @@ async function saveGameResult(result) {
         boardState: [...boardState],
         result: result,
         date: new Date().toISOString(),
-        aiDifficulty: isVsAI ? aiDifficulty : null
+        aiDifficulty: isVsAI ? aiDifficulty : null,
+        gameMode: gameMode
       })
     });
     if (!response.ok) {
@@ -361,8 +391,35 @@ function updatePersonalitySelectorVisibility() {
   }
 }
 
+// Global function to start a classic game
+function startClassicGame() {
+  gameMode = 'classic';
+  isVsAI = false;
+  resetGame();
+  document.getElementById('status-message').innerText = 'Player X\'s Turn';
+  updatePersonalitySelectorVisibility();
+  const personalityMessageElement = document.getElementById('ai-personality-message');
+  if (personalityMessageElement) {
+    personalityMessageElement.textContent = '';
+  }
+}
+
+// Global function to start X Always Wins mode
+function startXAlwaysWins() {
+  gameMode = 'xAlwaysWins';
+  isVsAI = false;
+  resetGame();
+  document.getElementById('status-message').innerText = 'Player X\'s Turn (X Always Wins)';
+  updatePersonalitySelectorVisibility();
+  const personalityMessageElement = document.getElementById('ai-personality-message');
+  if (personalityMessageElement) {
+    personalityMessageElement.textContent = '';
+  }
+}
+
 // Global function to start a new game vs AI with selected difficulty
 function startVsAI(difficulty = 'impossible') {
+  gameMode = 'classic';
   isVsAI = true;
   aiDifficulty = difficulty;
   resetGame();
@@ -373,6 +430,7 @@ function startVsAI(difficulty = 'impossible') {
 
 // Global function to start a new game vs Player
 function startVsPlayer() {
+  gameMode = 'classic';
   isVsAI = false;
   resetGame();
   document.getElementById('status-message').innerText = 'Player X\'s Turn';
@@ -387,15 +445,17 @@ function startVsPlayer() {
 function resetGame() {
   // Reset memory
   currentPlayer = 'X';
-  boardState = ['', '', '', '', '', '', '', '', ''];
   gameActive = true;
 
   // Reset UI
   document.getElementById('status-message').innerText = isVsAI ? `Player X's Turn (vs AI - ${aiDifficulty})` : `Player X's Turn`;
-  document.getElementById('reset-button').style.display = 'none'; // Hide button again
+  document.getElementById('reset-button').style.display = 'none';
 
-  // Clear all the squares on the screen
-  document.querySelectorAll('.cell').forEach(cell => {
-    cell.innerText = '';
-  });
+  // Re-initialize the board
+  initializeBoard();
 }
+
+// Initialize the board when the page loads
+window.onload = function() {
+  initializeBoard();
+};
