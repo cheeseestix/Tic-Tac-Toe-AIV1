@@ -6,11 +6,21 @@
   margin-top: 50px;
 }
 
-/* The Grid Setup */
-.board {
+/* The Grid Setup for 3x3 */
+.board.size-3x3 {
   display: grid;
   grid-template-columns: repeat(3, 100px); /* 3 columns, 100px wide */
   grid-template-rows: repeat(3, 100px);    /* 3 rows, 100px tall */
+  gap: 5px; /* The space between the cells (creates the "lines") */
+  background-color: #333; /* Dark background so the gap looks like grid lines */
+  border: 5px solid #333;
+}
+
+/* The Grid Setup for 2x2 */
+.board.size-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, 100px); /* 2 columns, 100px wide */
+  grid-template-rows: repeat(2, 100px);    /* 2 rows, 100px tall */
   gap: 5px; /* The space between the cells (creates the "lines") */
   background-color: #333; /* Dark background so the gap looks like grid lines */
   border: 5px solid #333;
