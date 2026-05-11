@@ -61,25 +61,56 @@
       font-weight: bold;
       color: #555;
     }
+    .mode-section {
+      margin-bottom: 30px;
+    }
+    .mode-section h3 {
+      text-align: center;
+      color: #444;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="leaderboard-container">
     <h2>Leaderboard</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Username</th>
-          <th>Wins vs Players</th>
-          <th>Wins vs AI</th>
-          <th>Total Games</th>
-        </tr>
-      </thead>
-      <tbody id="leaderboard-body">
-        <!-- Leaderboard data will be inserted here by JavaScript -->
-      </tbody>
-    </table>
+    
+    <div class="mode-section">
+      <h3>Classic 3x3 Mode</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Wins vs Players</th>
+            <th>Wins vs AI</th>
+            <th>Total Games</th>
+          </tr>
+        </thead>
+        <tbody id="classic-leaderboard-body">
+          <!-- Classic mode leaderboard data will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mode-section">
+      <h3>X Always Wins (2x2) Mode</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Wins as X</th>
+            <th>Wins as O</th>
+            <th>Total Games</th>
+          </tr>
+        </thead>
+        <tbody id="x-always-wins-leaderboard-body">
+          <!-- X Always Wins mode leaderboard data will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    
     <button class="back-button" onclick="window.location.href='/game.html'">Back to Game</button>
   </div>
 
@@ -92,25 +123,48 @@
           return;
         }
         const leaderboard = await response.json();
-        const leaderboardBody = document.getElementById('leaderboard-body');
         
-        if (leaderboard.length === 0) {
-          leaderboardBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No games played yet.</td></tr>';
-          return;
+        // Separate entries by game mode
+        const classicEntries = leaderboard.filter(entry => entry.gameMode === 'classic' || !entry.gameMode);
+        const xAlwaysWinsEntries = leaderboard.filter(entry => entry.gameMode === 'xAlwaysWins');
+        
+        // Load classic leaderboard
+        const classicLeaderboardBody = document.getElementById('classic-leaderboard-body');
+        if (classicEntries.length === 0) {
+          classicLeaderboardBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No games played yet in Classic mode.</td></tr>';
+        } else {
+          classicLeaderboardBody.innerHTML = '';
+          classicEntries.forEach((entry, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="rank">${index + 1}</td>
+              <td>${entry.username}</td>
+              <td>${entry.winsVsPlayer || 0}</td>
+              <td>${entry.winsVsAI || 0}</td>
+              <td>${entry.totalGames || 0}</td>
+            `;
+            classicLeaderboardBody.appendChild(row);
+          });
         }
-
-        leaderboardBody.innerHTML = '';
-        leaderboard.forEach((entry, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td class="rank">${index + 1}</td>
-            <td>${entry.username}</td>
-            <td>${entry.winsVsPlayer}</td>
-            <td>${entry.winsVsAI}</td>
-            <td>${entry.totalGames}</td>
-          `;
-          leaderboardBody.appendChild(row);
-        });
+        
+        // Load X Always Wins leaderboard
+        const xAlwaysWinsLeaderboardBody = document.getElementById('x-always-wins-leaderboard-body');
+        if (xAlwaysWinsEntries.length === 0) {
+          xAlwaysWinsLeaderboardBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No games played yet in X Always Wins mode.</td></tr>';
+        } else {
+          xAlwaysWinsLeaderboardBody.innerHTML = '';
+          xAlwaysWinsEntries.forEach((entry, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="rank">${index + 1}</td>
+              <td>${entry.username}</td>
+              <td>${entry.winsAsX || 0}</td>
+              <td>${entry.winsAsO || 0}</td>
+              <td>${entry.totalGames || 0}</td>
+            `;
+            xAlwaysWinsLeaderboardBody.appendChild(row);
+          });
+        }
       } catch (error) {
         console.error("Error loading leaderboard:", error);
       }
